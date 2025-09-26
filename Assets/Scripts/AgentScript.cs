@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class AgentScript : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class AgentScript : MonoBehaviour
     private int currentPatrolPoint = 0;
     public static AgentScript Instance;
     public GameObject jugador;
+    public bool Persigiendo = false;
+    public bool jugadorEnVision = false;
+    public int tiempoSinVision = 0;
 
     private void Awake()
     {
@@ -28,9 +32,12 @@ public class AgentScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
         if (patrullando)
         {
-            if(!agent.pathPending && agent.remainingDistance < 0.5f)
+            Persigiendo = false;
+            if (!agent.pathPending && agent.remainingDistance < 0.5f)
             {
                 currentPatrolPoint = (currentPatrolPoint + 1) % Puntos.Length;
                 agent.SetDestination(Puntos[currentPatrolPoint].position);
@@ -39,8 +46,17 @@ public class AgentScript : MonoBehaviour
             else
             {
                 agent.SetDestination(jugador.transform.position);
+                Persigiendo = true;    
             }
             velocity = agent.velocity.magnitude;
             anim.SetFloat("Speed",velocity);
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            SceneManager.LoadScene("Perdiste");
+        }
     }
 }

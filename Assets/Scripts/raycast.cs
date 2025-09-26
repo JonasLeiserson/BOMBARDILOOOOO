@@ -20,7 +20,13 @@ public class raycast : MonoBehaviour
             if (hitInfo.collider.gameObject.tag == "Player")
             {
                 AgentScript.Instance.patrullando = false;
+                AgentScript.Instance.jugadorEnVision = true;
+                AgentScript.Instance.tiempoSinVision = 0; 
             }
+        }
+        if (!AgentScript.Instance.patrullando)
+        {
+            AgentScript.Instance.jugadorEnVision = false;
         }
     }
 }
