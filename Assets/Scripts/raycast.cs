@@ -4,29 +4,45 @@ using UnityEngine;
 
 public class raycast : MonoBehaviour
 {
+    private AgentScript agentScript;
     float RaycastDistancia = 5f;
-    // Start is called before the first frame update
+
     void Start()
     {
-
+        agentScript = GetComponent<AgentScript>();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        bool JugadorDetectado = false;
+
         Debug.DrawRay(transform.position, transform.forward * RaycastDistancia, Color.red);
+
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, RaycastDistancia))
         {
             if (hitInfo.collider.gameObject.tag == "Player")
             {
-                AgentScript.Instance.patrullando = false;
-                AgentScript.Instance.jugadorEnVision = true;
-                AgentScript.Instance.tiempoSinVision = 0; 
+                agentScript.patrullando = false;
+                agentScript.jugadorEnVision = true;
+                agentScript.tiempoSinVision = 0;
+                JugadorDetectado = true;
             }
         }
-        if (!AgentScript.Instance.patrullando)
+
+        if (!JugadorDetectado)
         {
-            AgentScript.Instance.jugadorEnVision = false;
+            agentScript.jugadorEnVision = false;
+        }
+
+        if (!agentScript.jugadorEnVision && !agentScript.patrullando)
+        {
+            agentScript.tiempoSinVision += (int)(Time.deltaTime * 100);
+            Debug.Log(agentScript.tiempoSinVision);
+            if (agentScript.tiempoSinVision >= 500)
+            {
+                agentScript.patrullando = true;
+                agentScript.tiempoSinVision = 0;
+            }
         }
     }
 }
